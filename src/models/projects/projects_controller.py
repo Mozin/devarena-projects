@@ -77,15 +77,15 @@ def create_project():
 @projects_blueprint.route("/delete/<project_id>", methods=["GET"])
 @jwt_required()
 def delete_project(project_id):
-    '''Get quiz attempt details
+    '''Delete Project
     ---
    tags:
-   - "Quiz Attempt"
+   - "Project"
    consumes:
    - "application/json"
    security: [ { 'bearerAuth': [] } ]
    parameters:
-   - name: quiz_id
+   - name: project_id
      in: path
      type: string
      required: true
@@ -102,3 +102,4 @@ def delete_project(project_id):
 
     Project.delete_project_by_id(project_id)
     return jsonify({"response" : "Success"}), 200
+
