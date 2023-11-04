@@ -80,7 +80,7 @@ def delete_project(project_id):
     '''Delete Project
     ---
    tags:
-   - "Project"
+   - "Projects"
    consumes:
    - "application/json"
    security: [ { 'bearerAuth': [] } ]
@@ -103,3 +103,33 @@ def delete_project(project_id):
     Project.delete_project_by_id(project_id)
     return jsonify({"response" : "Success"}), 200
 
+
+
+@projects_blueprint.route("/get/<project_id>", methods=["GET"])
+@jwt_required()
+def get_project(project_id):
+    '''Get project details
+    ---
+   tags:
+   - "Projects"
+   consumes:
+   - "application/json"
+   security: [ { 'bearerAuth': [] } ]
+   parameters:
+   - name: project_id
+     in: path
+     type: string
+     required: true
+
+   responses:
+    200:
+      description: Delete Project
+    400:
+      description: PROJECT_NOT_FOUND
+    '''
+
+    project = Project.find_project_by_id(project_id)
+    if Project.find_project_by_id(project_id) is None:
+        return jsonify({"response": "PROJECT_NOT_FOUND"}), 400
+
+    return jsonify({k:v for k,v in project.__dict__.items() if not k in ["_sa_instance_state"]}), 200
