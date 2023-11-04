@@ -8,10 +8,8 @@ from src.common.database import Database
 
 def create_app():
     app = Flask(__name__)
-    # app.config[
-    #     "SQLALCHEMY_DATABASE_URI"] = f'postgresql://{os.environ["DB_USERNAME"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}'
     app.config[
-        "SQLALCHEMY_DATABASE_URI"] = f'postgresql://postgres:rvsabc1234@rvsdb.c1jshtxodiud.ap-south-1.rds.amazonaws.com:5432/rvsdb'
+        "SQLALCHEMY_DATABASE_URI"] = f'postgresql://{os.environ["DB_USERNAME"]}:{os.environ["DB_PASSWORD"]}@{os.environ["DB_HOST"]}:{os.environ["DB_PORT"]}/{os.environ["DB_NAME"]}'
     app.secret_key = 'super secret key'
     Database.initialize(app)
 
