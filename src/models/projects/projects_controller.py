@@ -73,6 +73,73 @@ def create_project():
     return jsonify({"response" : "Success"}), 200
 
 
+@projects_blueprint.route("/modify", methods=["POST"])
+# @jwt_required()
+@expects_json(
+    {
+    'type': 'object',
+    'properties': {
+        'project_id' : {'type': 'string'},
+        'title': {'type': 'string'},
+        'description': {'type': 'string'},
+        'completed' : {'type' : 'boolean'}
+    },
+    'required': ['project_id']
+    }
+)
+def modify_project():
+    '''Modify Project
+    ---
+   tags:
+   - Projects
+   security: [ { 'bearerAuth': [] } ]
+   consumes:
+   - "application/json"
+   parameters:
+   - in: "body"
+     name: "body"
+     required: true
+     schema:
+       type: "object"
+       properties:
+         project_id:
+           type: "string"
+         title:
+           type: "string"
+         description:
+           type: "string"
+         completed:
+           type: "boolean"
+   responses:
+    200:
+      description: Success message
+    400:
+      description: Invalid input | MISSING_INPUT_KEYS | PROJECT_NOT_FOUND
+   '''
+    user_id = get_user_identity()
+    user = User.find_user_by_id(user_id)
+    if not user:
+        return jsonify({"response" : "USER_NOT_FOUND"}), 400
+    if not Utils.check_required_keys_present(request.json, ["title"]):
+        return jsonify({"response": "MISSING_INPUT_KEYS"}), 400
+
+    project = Project.find_project_by_id(request.json["project_id"])
+
+    if project is None:
+        return jsonify({"response": "PROJECT_NOT_FOUND"}), 400
+
+    if "title" in request.json:
+        project.title = request.json["title"]
+    if "description" in request.json:
+        project.description = request.json["description"]
+    if "completed" in request.json:
+        project.completed = request.json["completed"]
+
+    project.save()
+
+    return jsonify({"response" : "Success"}), 200
+
+
 
 @projects_blueprint.route("/delete/<project_id>", methods=["GET"])
 @jwt_required()
